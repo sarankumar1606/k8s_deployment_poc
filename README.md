@@ -100,5 +100,61 @@ Check worker nodes cluster joining status
 
 
 
+# Jenkins Installation
 
+Followed official documentation to install jenkins in aws ec2 node.
+
+https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+
+so configured Jenkins 
+
+<img width="460" alt="image" src="https://github.com/user-attachments/assets/c79a3c0b-dfe7-4333-af12-dd5b750d0839">
+
+
+Created Jenkins pipeline to deploy sample python app into kubernetes cluster.
+
+installed Kubernetes CLI plugin for credentials configuration.
+
+From python code, docker image has also been created as per pipeline step.
+
+all pipeline steps are added in this github repo.
+
+![image](https://github.com/user-attachments/assets/cbb10cd6-4a37-409f-b474-f064567e29c5)
+
+once deployed into Kuberntes cluster in appdeploy namespace,
+
+<img width="389" alt="image" src="https://github.com/user-attachments/assets/4f3314d0-ce60-440c-af99-9cfd3149fd7f">
+
+after deploying, i was able to access the heelo world application using cluster IP,
+
+![image](https://github.com/user-attachments/assets/839f55a4-83d0-466e-bf1d-d96e19f84e2e)
+
+
+# Prometheaus Installation
+
+You can use the official Prometheus YAML templates from the Prometheus GitHub repository
+
+```
+git clone https://github.com/prometheus-operator/kube-prometheus.git
+cd kube-prometheus/manifests
+```
+executing yaml files,
+
+```
+kubectl create -f setup/
+kubectl create -f .
+```
+This deploys:
+
+Prometheus
+Alertmanager
+Node Exporter
+Grafana
+Related Custom Resource Definitions (CRDs).
+
+Verify the installation using below command,
+```
+kubectl get all -n monitoring
+```
+![image](https://github.com/user-attachments/assets/78f1af6b-01c7-4893-b83b-728d053a3f51)
 
