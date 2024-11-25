@@ -119,7 +119,7 @@ From python code, docker image has also been created as per pipeline step.
 
 all pipeline steps are added in this github repo.
 
-![image](https://github.com/user-attachments/assets/cbb10cd6-4a37-409f-b474-f064567e29c5)
+![image](https://github.com/user-attachments/assets/98fe3c3e-643c-4cf6-add7-070c50041fa6)
 
 once deployed into Kuberntes cluster in appdeploy namespace,
 
