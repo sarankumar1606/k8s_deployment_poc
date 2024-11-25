@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-world
-        image: <your-dockerhub-username>/hello-world:latest
+        image: sarannethi/k8s-helloworld:latest
         ports:
         - containerPort: 5000
 ---
