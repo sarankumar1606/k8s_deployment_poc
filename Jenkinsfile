@@ -1,53 +1,49 @@
 pipeline {
     agent any
-
+    
     environment {
-        DOCKER_IMAGE = 'your-dockerhub-username/hello-world'
-        DOCKER_CREDENTIALS = 'docker-hub-credentials-id' // Add credentials in Jenkins
+        DOCKER_IMAGE = 'k8s-helloworld'   // Name of the Docker image
+        DOCKER_TAG = 'latest'             // Tag for the image (e.g., 'latest', 'v1.0.0')
+        DOCKER_REGISTRY = 'sarannethi' // Optional: If pushing to a private registry
+        DOCKERHUB_CREDENTIALS= credentials('dockerhubcredentials')
+        KUBECONFIG_CREDENTIAL_ID = 'kubeconfig-prod'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', credentialsId: '2310c1c0-b41b-41dd-8c28-ab44ddb25822', url: 'https://github.com/sarankumar1606/k8s_deployment_poc.git'
             }
         }
-
-        stage('Build Docker Image') {
+    stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE)
+                    sh "sudo docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
         }
-
         stage('Push Docker Image') {
             steps {
-                withDockerRegistry([credentialsId: DOCKER_CREDENTIALS, url: 'https://index.docker.io/v1/']) {
                     script {
-                        docker.image(DOCKER_IMAGE).push('latest')
+                        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                        sh "sudo docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sh "sudo docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
-            }
         }
-
         stage('Deploy to Kubernetes') {
             steps {
-                withKubeConfig([credentialsId: 'kubeconfig-credentials-id']) {
+                withKubeConfig([credentialsId: KUBECONFIG_CREDENTIAL_ID]) {
                     sh '''
-                    kubectl apply -f k8s-deployment.yaml
+                    # Use kubectl commands
+                    kubectl get nodes
+                    kubectl create namespace appdeploy
+                    kubectl apply -f k8s-deployment.yaml -n appdeploy
+                    
                     '''
                 }
             }
         }
+        
+        }        
     }
-
-    post {
-        success {
-            echo "Pipeline completed successfully!"
-        }
-        failure {
-            echo "Pipeline failed!"
-        }
-    }
-}
